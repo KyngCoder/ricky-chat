@@ -2,15 +2,26 @@ const express = require('express')
 const chats = require('./data/chat')
 const dotenv = require('dotenv')
 const cors = require('cors')
+const connectDB = require('./config/db')
+const userRoutes = require('./routes/userRoutes')
+const { notFound, errorHandler } = require('./middleware/errorMiddleware')
 dotenv.config()
 
 
-
+connectDB()
 
 const app = express()
 
 app.use(cors())
-app.use(express())
+app.use(express.json())
+
+app.use('/api/user',userRoutes)
+
+//handling routes that don't exist
+
+app.use(notFound)
+app.use(errorHandler)
+
 
 app.get('/',(req,res)=>{
     res.send('API is Running')
