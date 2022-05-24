@@ -23,7 +23,7 @@ const Signup = () => {
 
 
   const handleSubmit = async(event) => {
-
+    event.preventDefault()
     if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Please Fill all the Feilds",
@@ -32,6 +32,7 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
+      
      
       return;
     }
@@ -53,7 +54,7 @@ const Signup = () => {
           name,
           email,
           password,
-          pic,
+          pic:'',
         }
       );
       console.log(data);
@@ -67,6 +68,7 @@ const Signup = () => {
 
       navigate("/chats");
     } catch (error) {
+      console.log(error)
       toast({
         title: "Error Occured!",
         description: error.response.data.message,
