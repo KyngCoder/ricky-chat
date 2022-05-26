@@ -9,14 +9,14 @@ import ChatLoading from "./ChatLoading";
 import { Button } from "@chakra-ui/react";
 import { ChatState } from './context/ChatProvider'
 
-const MyChats = ({ fetchAgain }) => {
+const MyChats = () => {
   const [loggedUser, setLoggedUser] = useState();
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
 
   const fetchChats = async () => {
-    // console.log(user._id);
+     console.log(user._id);
     try {
       const config = {
         headers: {
@@ -24,7 +24,8 @@ const MyChats = ({ fetchAgain }) => {
         },
       };
 
-      const { data } = await axios.get("http://localhost:5000/api/chat", config);
+      const { data } = await axios.get("http://localhost:5000/api/chat", config)
+      console.log(data)
       setChats(data);
     } catch (error) {
       console.log(error)
@@ -35,7 +36,7 @@ const MyChats = ({ fetchAgain }) => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
     // eslint-disable-next-line
-  }, [fetchAgain]);
+  }, []);
 
   return (
     <Box
@@ -59,15 +60,13 @@ const MyChats = ({ fetchAgain }) => {
         alignItems="center"
       >
         My Chats
-        {/* <GroupChatModal>
-          <Button
+        <Button
             d="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             rightIcon={<AddIcon />}
           >
             New Group Chat
           </Button>
-        </GroupChatModal> */}
       </Box>
       <Box
         display="flex"

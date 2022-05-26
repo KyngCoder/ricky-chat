@@ -41,8 +41,6 @@ const SideDrawer = () => {
   const [loading,setLoading] = useState(false);
   const [loadingChat,setLoadingChat] = useState()
   const { isOpen, onOpen, onClose } = useDisclosure()
- 
- console.log(user)
   const navigate = useNavigate()
 
   const logout = () => {
@@ -62,7 +60,7 @@ const SideDrawer = () => {
           Authorization: `Bearer ${user.token}`
         }
       }
-      const {data} =  await axios.get(`http://localhost:5000/api/user?name=${search}`,config)
+      const {data} =  await axios.get(`http://localhost:5000/api/user?search=${search}`,config)
       setLoading(false)
       setSearchResult(data)
     }catch{
@@ -82,13 +80,15 @@ const SideDrawer = () => {
         },
       };
       const { data } = await axios.post(`http://localhost:5000/api/chat`, { userId }, config);
-
-      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
-      setSelectedChat(data);
-      setLoadingChat(false);
-      onClose();
+      if (!chats.find((c) => c._id === data._id)) {
+        setChats([data, ...chats]);
+        setSelectedChat(data);
+        setLoadingChat(false);
+        onClose();
+      }
+     
     } catch (error) {
-      alert("user don't exist")
+      alert("failed to fetch chat")
     }
   };
   return (

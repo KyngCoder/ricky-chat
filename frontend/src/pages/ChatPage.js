@@ -9,7 +9,6 @@ import ChatBox from '../components/ChatBox'
 
 const ChatPage = () => {
   const {user} = ChatState()  
-  {console.log(user)}
   return (
     <div style={{width:"100%"}}>
      {user && <SideDrawer />}
