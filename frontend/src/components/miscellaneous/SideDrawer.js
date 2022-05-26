@@ -35,12 +35,14 @@ import { Search2Icon } from '@chakra-ui/icons'
 
 
 const SideDrawer = () => {
-  const {user} = ChatState()
+  const {user,setSelectedChat,chats,setChats} = ChatState()
   const [search,setSearch] = useState("")
   const [searchResult,setSearchResult] = useState([])
-  const [loading,seLoading] = useState(false);
+  const [loading,setLoading] = useState(false);
   const [loadingChat,setLoadingChat] = useState()
-
+  const { isOpen, onOpen, onClose } = useDisclosure()
+ 
+ console.log(user)
   const navigate = useNavigate()
 
   const logout = () => {
@@ -48,6 +50,47 @@ const SideDrawer = () => {
     navigate('/')
   }
 
+  const handleSearch = async() => {
+    if(!search){
+      alert('please enter a search term')
+    }
+
+    try{
+      setLoading(true)
+      const config = {
+        headers:{
+          Authorization: `Bearer ${user.token}`
+        }
+      }
+      const {data} =  await axios.get(`http://localhost:5000/api/user?name=${search}`,config)
+      setLoading(false)
+      setSearchResult(data)
+    }catch{
+      alert('no match')
+    }
+  }
+
+  const accessChat = async (userId) => {
+    console.log(userId);
+
+    try {
+      setLoadingChat(true);
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.post(`http://localhost:5000/api/chat`, { userId }, config);
+
+      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      setSelectedChat(data);
+      setLoadingChat(false);
+      onClose();
+    } catch (error) {
+      alert("user don't exist")
+    }
+  };
   return (
     <>
       <Box
@@ -59,7 +102,7 @@ const SideDrawer = () => {
       borderWidth="5px"
       >
       <Tooltip label="search user to chat" hasArrow placement="bottom-end">
-          <Button variant="gh">
+          <Button variant="gh" onClick={onOpen}>
             <Search2Icon />
               <Text d={{base:"none",md:"flex"}} px="4">
                 Search User
@@ -93,6 +136,34 @@ const SideDrawer = () => {
          </div>
    
       </Box>
+      <Drawer
+        isOpen={isOpen}
+        placement='left'
+        onClose={onClose}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader>Search Users</DrawerHeader>
+
+          <DrawerBody>
+            <Input value={search} 
+            onChange={(e)=>setSearch(e.target.value)}
+            placeholder='Search User...' />
+            <Button onClick={handleSearch}>Search</Button>
+            {loading? <ChatLoading /> : (
+              searchResult?.map((user)=>(
+                <UserListItem
+                key={user._id}
+                user={user}
+                handleFunction={()=>accessChat(user._id)}
+                 />
+              ))
+            )}
+            {loadingChat && <Spinner ml="auto" display="flex" />}
+          </DrawerBody>
+
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }
