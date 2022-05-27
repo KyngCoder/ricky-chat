@@ -13,16 +13,18 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react'
+
 import { ViewIcon } from '@chakra-ui/icons'
 
 const ProfileModal = ({user,children}) => {
   const {isOpen, onOpen, onClose} = useDisclosure()
+  
   return (
     <>
       {
         children?<span onClick={onOpen}>{children}</span>
         :(
-          <IconButton  icon={<ViewIcon />} onclick={onOpen} />
+          <IconButton  icon={<ViewIcon />} onClick={onOpen} />
 
         )
       }
